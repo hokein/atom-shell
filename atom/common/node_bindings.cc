@@ -76,6 +76,9 @@ REFERENCE_MODULE(atom_common_shell);
 REFERENCE_MODULE(atom_common_v8_util);
 REFERENCE_MODULE(atom_renderer_ipc);
 REFERENCE_MODULE(atom_renderer_web_frame);
+#if defined(ENABLE_EXTENSIONS)
+REFERENCE_MODULE(atom_renderer_chrome_api_request_sender);
+#endif
 #undef REFERENCE_MODULE
 
 namespace atom {

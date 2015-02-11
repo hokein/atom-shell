@@ -61,6 +61,10 @@
 #include "ui/gfx/switches.h"
 #endif
 
+#if defined(ENABLE_EXTENSIONS)
+#include "atom/browser/chrome_api/chrome_api_host.h"
+#endif
+
 using content::NavigationEntry;
 using content::RenderWidgetHostView;
 using content::RenderWidgetHost;
@@ -107,6 +111,10 @@ NativeWindow::NativeWindow(content::WebContents* web_contents,
       inspectable_web_contents_(
           brightray::InspectableWebContents::Create(web_contents)) {
   printing::PrintViewManagerBasic::CreateForWebContents(web_contents);
+
+#if defined(ENABLE_EXTENSIONS)
+  new ChromeAPIHost(web_contents);
+#endif
 
   options.Get(switches::kFrame, &has_frame_);
   options.Get(switches::kTransparent, &transparent_);

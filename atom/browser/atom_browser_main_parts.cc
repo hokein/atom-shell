@@ -20,6 +20,16 @@
 
 #include "atom/common/node_includes.h"
 
+#if defined(ENABLE_EXTENSIONS)
+#include "components/keyed_service/content/browser_context_dependency_manager.h"
+#include "components/storage_monitor/storage_monitor.h"
+#include "extensions/browser/shell_extension_system.h"
+#include "extensions/browser/shell_extension_system_factory.h"
+#include "extensions/browser/shell_extensions_browser_client.h"
+#include "extensions/common/shell_extensions_client.h"
+#include "extensions/browser/browser_context_keyed_service_factories.h"
+#endif
+
 namespace atom {
 
 // static
@@ -91,6 +101,35 @@ void AtomBrowserMainParts::PreMainMessageLoopRun() {
                  1000));
 
   brightray::BrowserMainParts::PreMainMessageLoopRun();
+
+#if defined(ENABLE_EXTENSIONS)
+  storage_monitor::StorageMonitor::Create();
+  extensions_client_.reset(new extensions::ShellExtensionsClient());
+  extensions::ExtensionsClient::Set(extensions_client_.get());
+
+  extensions_browser_client_.reset(
+      new extensions::ShellExtensionsBrowserClient(browser_context()));
+  extensions::ExtensionsBrowserClient::Set(extensions_browser_client_.get());
+
+  // Create our custom ExtensionSystem first because other
+  // KeyedServices depend on it.
+  extension_system_ = static_cast<extensions::ShellExtensionSystem*>(
+            extensions::ExtensionSystem::Get(browser_context()));
+  extension_system_->InitForRegularProfile(true);
+
+  // Register additional KeyedService factories here. See
+  // ChromeBrowserMainExtraPartsProfiles for details.
+  extensions::EnsureBrowserContextKeyedServiceFactoriesBuilt();
+  extensions::ShellExtensionSystemFactory::GetInstance();
+
+
+  BrowserContextDependencyManager::GetInstance()->CreateBrowserContextServices(
+      browser_context());
+  extensions::ShellExtensionSystem* extension_system =
+      static_cast<extensions::ShellExtensionSystem*>(
+          extensions::ExtensionSystem::Get(browser_context()));
+  extension_system->Init();
+#endif
 
 #if defined(USE_X11)
   libgtk2ui::GtkInitFromCommandLine(*CommandLine::ForCurrentProcess());

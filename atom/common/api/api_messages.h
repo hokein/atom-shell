@@ -37,3 +37,15 @@ IPC_MESSAGE_ROUTED2(AtomViewMsg_Message,
 // Sent by the renderer when the draggable regions are updated.
 IPC_MESSAGE_ROUTED1(AtomViewHostMsg_UpdateDraggableRegions,
                     std::vector<atom::DraggableRegion> /* regions */)
+
+#if defined(ENABLE_EXTENSIONS)
+IPC_MESSAGE_ROUTED3(ChromeAPIHostMsg_Request,
+                    std::string /* function name */,
+                    base::ListValue /* arguments */,
+                    int /* request_id */)
+
+IPC_MESSAGE_ROUTED3(ChromeAPIMsg_Response,
+                    std::string /* error message */,
+                    base::ListValue /* results */,
+                    int /* request_id */)
+#endif

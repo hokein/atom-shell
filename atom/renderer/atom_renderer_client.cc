@@ -23,6 +23,10 @@
 
 #include "atom/common/node_includes.h"
 
+#if defined(ENABLE_EXTENSIONS)
+#include "atom/renderer/chrome_api/chrome_api_helper.h"
+#endif
+
 namespace atom {
 
 namespace {
@@ -81,6 +85,9 @@ void AtomRendererClient::RenderThreadStarted() {
 void AtomRendererClient::RenderViewCreated(content::RenderView* render_view) {
   new printing::PrintWebViewHelper(render_view);
   new AtomRenderViewObserver(render_view, this);
+#if defined(ENABLE_EXTENSIONS)
+  new ChromeAPIHelper(render_view);
+#endif
 }
 
 blink::WebSpeechSynthesizer* AtomRendererClient::OverrideSpeechSynthesizer(

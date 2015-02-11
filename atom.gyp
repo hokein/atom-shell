@@ -3,6 +3,7 @@
     'includes': [
       'vendor/native_mate/native_mate_files.gypi',
     ],
+    'enable_chrome_api%': 1,
     'project_name%': 'atom',
     'product_name%': 'Atom',
     'app_sources': [
@@ -44,6 +45,7 @@
       'atom/common/lib/asar.coffee',
       'atom/renderer/lib/chrome-api.coffee',
       'atom/renderer/lib/init.coffee',
+      'atom/renderer/lib/inject-chrome-api.coffee',
       'atom/renderer/lib/inspector.coffee',
       'atom/renderer/lib/override.coffee',
       'atom/renderer/lib/web-view/guest-view-internal.coffee',
@@ -334,6 +336,35 @@
       'chromium_src/library_loaders/libspeechd.h',
       '<@(native_mate_files)',
     ],
+    'lib_sources_chrome_api': [
+      'atom/browser/chrome_api/chrome_api_dispatcher.cc',
+      'atom/browser/chrome_api/chrome_api_dispatcher.h',
+      'atom/browser/chrome_api/chrome_api_host.cc',
+      'atom/browser/chrome_api/chrome_api_host.h',
+      'atom/renderer/api/chrome_api_request_sender.cc',
+      'atom/renderer/api/chrome_api_request_sender.h',
+      'atom/renderer/chrome_api/chrome_api_helper.cc',
+      'atom/renderer/chrome_api/chrome_api_helper.h',
+      'chromium_src/extensions/shell/browser/media_capture_util.cc',
+      'chromium_src/extensions/shell/browser/media_capture_util.h',
+      'chromium_src/extensions/shell/browser/shell_display_info_provider.cc',
+      'chromium_src/extensions/shell/browser/shell_display_info_provider.h',
+      'chromium_src/extensions/shell/browser/shell_extension_host_delegate.cc',
+      'chromium_src/extensions/shell/browser/shell_extension_host_delegate.h',
+      'chromium_src/extensions/shell/browser/shell_extension_system.cc',
+      'chromium_src/extensions/shell/browser/shell_extension_system.h',
+      'chromium_src/extensions/shell/browser/shell_extension_system_factory.cc',
+      'chromium_src/extensions/shell/browser/shell_extension_system_factory.h',
+      'chromium_src/extensions/shell/browser/shell_extension_web_contents_observer.cc',
+      'chromium_src/extensions/shell/browser/shell_extension_web_contents_observer.h',
+      'chromium_src/extensions/shell/browser/shell_extensions_browser_client.cc',
+      'chromium_src/extensions/shell/browser/shell_extensions_browser_client.h',
+      'chromium_src/extensions/shell/browser/shell_runtime_api_delegate.cc',
+      'chromium_src/extensions/shell/browser/shell_runtime_api_delegate.h',
+      'chromium_src/extensions/shell/browser/shell_web_contents_modal_dialog_manager.cc',
+      'chromium_src/extensions/shell/common/shell_extensions_client.cc',
+      'chromium_src/extensions/shell/common/shell_extensions_client.h',
+    ],
     'lib_sources_win': [
       'chromium_src/chrome/browser/ui/views/color_chooser_dialog.cc',
       'chromium_src/chrome/browser/ui/views/color_chooser_dialog.h',
@@ -542,6 +573,8 @@
         'chromium_src',
         'vendor/brightray',
         'vendor/native_mate',
+        # Include generated Chrome.* API headers.
+        '<(libchromiumcontent_library_dir)/gen',
         # Include directories for uv and node.
         'vendor/node/src',
         'vendor/node/deps/http_parser',
@@ -562,6 +595,29 @@
         'vendor/brightray/brightray.gyp:brightray',
       ],
       'conditions': [
+        ['enable_chrome_api==1', {
+          'defines': [
+            'ENABLE_EXTENSIONS=1',
+          ],
+          'sources': [
+            '<@(lib_sources_chrome_api)',
+          ],
+          'conditions':[
+            ['OS=="mac"', {
+              'link_settings': {
+                'libraries':[
+                  # Link library path starts from <source_dir>/out/Release
+                  '../../<(libchromiumcontent_library_dir)/libchromiumextensions.a',
+                  '$(SDKROOT)/System/Library/Frameworks/IOBluetooth.framework',
+                  '$(SDKROOT)/System/Library/Frameworks/DiskArbitration.framework',
+                  '$(SDKROOT)/System/Library/Frameworks/Foundation.framework',
+                  '$(SDKROOT)/System/Library/Frameworks/ImageCaptureCore.framework',
+                  '$(SDKROOT)/System/Library/Frameworks/IOKit.framework',
+                ],
+              }
+            }],
+          ],
+        }],
         ['OS=="win"', {
           'sources': [
             '<@(lib_sources_win)',

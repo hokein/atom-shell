@@ -8,6 +8,14 @@
 #include "base/timer/timer.h"
 #include "brightray/browser/browser_main_parts.h"
 
+#if defined(ENABLE_EXTENSIONS)
+namespace extensions {
+class ExtensionsBrowserClient;
+class ExtensionsClient;
+class ShellExtensionSystem;
+}
+#endif
+
 namespace atom {
 
 class AtomBindings;
@@ -47,6 +55,14 @@ class AtomBrowserMainParts : public brightray::BrowserMainParts {
   scoped_ptr<NodeBindings> node_bindings_;
   scoped_ptr<AtomBindings> atom_bindings_;
   scoped_ptr<NodeDebugger> node_debugger_;
+
+#if defined(ENABLE_EXTENSIONS)
+  // Owned by the KeyedService system.
+  extensions::ShellExtensionSystem* extension_system_;
+
+  scoped_ptr<extensions::ExtensionsClient> extensions_client_;
+  scoped_ptr<extensions::ExtensionsBrowserClient> extensions_browser_client_;
+#endif
 
   base::Timer gc_timer_;
 

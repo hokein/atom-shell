@@ -26,6 +26,12 @@ require path.resolve(__dirname, '..', '..', 'common', 'lib', 'init')
 v8Util = process.atomBinding 'v8_util'
 v8Util.setHiddenValue global, 'ipc', new events.EventEmitter
 
+# Inject chrome.* API to renderer.
+try
+  require './inject-chrome-api'
+catch error
+  # Do nothing here since chrome.* API is disabled.
+
 # Process command line arguments.
 nodeIntegration = 'false'
 for arg in process.argv
