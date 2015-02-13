@@ -29,6 +29,28 @@ prepareRequest = (args) ->
     request.args[k] = args[k]
   request
 
+#var attachedEventNames = []
+#chrome_api_request_sender._dispatchEvent = () ->
+
+
+#function EventImpl (eventName) {
+  #this.eventName = eventName
+  #this.listeners = [];
+#}
+
+#EventImpl.addListener = function(listener) {
+  #this.listeners_.push(listener);
+  #if (this.listeners_.size == 1):
+    #chrome_api_request_sender._attachEvent(this.eventName)
+#}
+
+#EventImpl.removeListener = function(listener) {
+#}
+
+chrome.test = ->
+  chrome_api_request_sender._attachEvent "system.storage.onAttached"
+#system.storage.onAttached
+
 chrome.system =
   cpu:
     getInfo: ->
@@ -54,3 +76,24 @@ chrome.system =
       request.id = chrome_api_request_sender._getNextRequestID()
       requests[request.id] = request
       chrome_api_request_sender._sentRequest 'system.network.getNetworkInterfaces', [], request.id
+
+chrome.serial =
+  getDevices: ->
+      request = prepareRequest arguments
+      request.id = chrome_api_request_sender._getNextRequestID()
+      requests[request.id] = request
+      chrome_api_request_sender._sentRequest 'serial.getDevices', [{}], request.id
+
+chrome.hid =
+  getDevices: ->
+      request = prepareRequest arguments
+      request.id = chrome_api_request_sender._getNextRequestID()
+      requests[request.id] = request
+      chrome_api_request_sender._sentRequest 'hid.getDevices', [{}], request.id
+
+chrome.usb =
+  getUserSelectedDevices: ->
+      request = prepareRequest arguments
+      request.id = chrome_api_request_sender._getNextRequestID()
+      requests[request.id] = request
+      chrome_api_request_sender._sentRequest 'usb.getUserSelectedDevices', [{}], request.id

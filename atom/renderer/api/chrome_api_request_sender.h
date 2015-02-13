@@ -29,6 +29,7 @@ class ChromeApiRequestSender : public mate::Wrappable {
   void SendRequest(const std::string& name, const base::ListValue& arguements,
       const int& request_id);
   int GetNextRequestID();
+  void AttachEvent(const std::string& event_name);
 
   DISALLOW_COPY_AND_ASSIGN(ChromeApiRequestSender);
 };

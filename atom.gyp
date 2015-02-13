@@ -339,6 +339,8 @@
     'lib_sources_chrome_api': [
       'atom/browser/chrome_api/chrome_api_dispatcher.cc',
       'atom/browser/chrome_api/chrome_api_dispatcher.h',
+      'atom/browser/chrome_api/chrome_api_event_router.cc',
+      'atom/browser/chrome_api/chrome_api_event_router.h',
       'atom/browser/chrome_api/chrome_api_host.cc',
       'atom/browser/chrome_api/chrome_api_host.h',
       'atom/renderer/api/chrome_api_request_sender.cc',
@@ -347,6 +349,8 @@
       'atom/renderer/chrome_api/chrome_api_helper.h',
       'chromium_src/extensions/shell/browser/media_capture_util.cc',
       'chromium_src/extensions/shell/browser/media_capture_util.h',
+      'chromium_src/extensions/shell/browser/shell_device_client.cc',
+      'chromium_src/extensions/shell/browser/shell_device_client.h',
       'chromium_src/extensions/shell/browser/shell_display_info_provider.cc',
       'chromium_src/extensions/shell/browser/shell_display_info_provider.h',
       'chromium_src/extensions/shell/browser/shell_extension_host_delegate.cc',

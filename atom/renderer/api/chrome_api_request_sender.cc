@@ -52,12 +52,19 @@ int ChromeApiRequestSender::GetNextRequestID() {
   return request_id++;
 }
 
+void ChromeApiRequestSender::AttachEvent(const std::string& event_name) {
+  content::RenderView* render_view = GetRenderView();
+  render_view->Send(new ChromeAPIHostMsg_AddListener(
+        render_view->GetRoutingID(), event_name));
+}
+
 mate::ObjectTemplateBuilder ChromeApiRequestSender::GetObjectTemplateBuilder(
     v8::Isolate* isolate) {
   return mate::ObjectTemplateBuilder(isolate)
       .SetMethod("_sentRequest", &ChromeApiRequestSender::SendRequest)
       .SetMethod("_getNextRequestID",
-          &ChromeApiRequestSender::GetNextRequestID);
+          &ChromeApiRequestSender::GetNextRequestID)
+      .SetMethod("_attachEvent", &ChromeApiRequestSender::AttachEvent);
 }
 
 mate::Handle<ChromeApiRequestSender> ChromeApiRequestSender::Create(

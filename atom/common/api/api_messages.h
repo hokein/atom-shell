@@ -48,4 +48,7 @@ IPC_MESSAGE_ROUTED3(ChromeAPIMsg_Response,
                     std::string /* error message */,
                     base::ListValue /* results */,
                     int /* request_id */)
+
+IPC_MESSAGE_ROUTED1(ChromeAPIHostMsg_AddListener,
+                    std::string /* event name */)
 #endif

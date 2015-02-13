@@ -21,6 +21,7 @@ class Message;
 namespace content {
 class WebContents;
 class RenderViewHost;
+class RenderProcessHost;
 }
 
 namespace atom {
@@ -35,6 +36,7 @@ class ChromeAPIHost : public content::WebContentsObserver {
  protected:
   void OnRequest(const std::string& name, const base::ListValue& args,
       const int& request_id);
+  void OnAddListener(const std::string& event_name);
 
   // Implementations of content::WebContentsObserver.
   void RenderViewCreated(content::RenderViewHost* render_view_host) override;
@@ -42,6 +44,8 @@ class ChromeAPIHost : public content::WebContentsObserver {
 
  private:
   content::RenderViewHost* render_view_host_;
+  content::RenderProcessHost* render_process_host_;
+
   scoped_ptr<ChromeAPIDispatcher> chrome_api_dispatcher_;
 
   DISALLOW_COPY_AND_ASSIGN(ChromeAPIHost);

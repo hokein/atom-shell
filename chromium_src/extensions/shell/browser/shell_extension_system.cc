@@ -6,6 +6,7 @@
 
 #include <string>
 
+#include "atom/browser/chrome_api/chrome_api_event_router.h"
 #include "base/files/file_path.h"
 #include "base/files/file_util.h"
 #include "content/public/browser/browser_context.h"
@@ -101,7 +102,8 @@ void ShellExtensionSystem::InitForRegularProfile(bool extensions_enabled) {
   lazy_background_task_queue_.reset(
       new LazyBackgroundTaskQueue(browser_context_));
   event_router_.reset(
-      new EventRouter(browser_context_, ExtensionPrefs::Get(browser_context_)));
+      new atom::ChromeAPIEventRouter(browser_context_,
+        ExtensionPrefs::Get(browser_context_)));
   quota_service_.reset(new QuotaService);
 }
 

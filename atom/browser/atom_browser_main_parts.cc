@@ -23,11 +23,12 @@
 #if defined(ENABLE_EXTENSIONS)
 #include "components/keyed_service/content/browser_context_dependency_manager.h"
 #include "components/storage_monitor/storage_monitor.h"
+#include "extensions/browser/browser_context_keyed_service_factories.h"
 #include "extensions/browser/shell_extension_system.h"
 #include "extensions/browser/shell_extension_system_factory.h"
 #include "extensions/browser/shell_extensions_browser_client.h"
 #include "extensions/common/shell_extensions_client.h"
-#include "extensions/browser/browser_context_keyed_service_factories.h"
+#include "extensions/shell/browser/shell_device_client.h"
 #endif
 
 namespace atom {
@@ -103,6 +104,8 @@ void AtomBrowserMainParts::PreMainMessageLoopRun() {
   brightray::BrowserMainParts::PreMainMessageLoopRun();
 
 #if defined(ENABLE_EXTENSIONS)
+  device_client_.reset(new extensions::ShellDeviceClient);
+
   storage_monitor::StorageMonitor::Create();
   extensions_client_.reset(new extensions::ShellExtensionsClient());
   extensions::ExtensionsClient::Set(extensions_client_.get());

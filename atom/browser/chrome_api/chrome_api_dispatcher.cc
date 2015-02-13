@@ -25,6 +25,12 @@
 #include "extensions/common/extension_messages.h"
 #include "extensions/common/extension_api.h"
 
+#include "base/files/file_path.h"
+#include "base/files/file_util.h"
+#include "base/path_service.h"
+#include "extensions/common/manifest_constants.h"
+
+using extensions::Extension;
 
 using content::BrowserThread;
 using content::RenderViewHost;
@@ -75,6 +81,7 @@ class ChromeAPIDispatcher::UIThreadResponseCallbackWrapper
                                     ExtensionFunction::ResponseType type,
                                     const base::ListValue& results,
                                     const std::string& error) {
+    LOG(ERROR) << "Result: " << results.GetSize();
     render_view_host_->Send(new ChromeAPIMsg_Response(
         render_view_host_->GetRoutingID(), error, results, request_id));
   }
@@ -109,6 +116,7 @@ void ChromeAPIDispatcher::Dispatch(
       callback_wrapper->CreateCallback(params.request_id));
 }
 
+scoped_refptr<const Extension> g_extension;
 void ChromeAPIDispatcher::DispatchWithCallbackInternal(
     const ExtensionHostMsg_Request_Params& params,
     RenderViewHost* render_view_host,
@@ -122,12 +130,28 @@ void ChromeAPIDispatcher::DispatchWithCallbackInternal(
   if (!process_map)
     return;
 
-  const Extension* extension = NULL;
+  //const Extension* extension = NULL;
+  base::DictionaryValue manifest;
+  manifest.SetString("name", "atom-shell");
+  manifest.SetString("version", "1");
+  manifest.SetInteger("manifest_version", 2);
+
+  base::ListValue* permission_list = new base::ListValue;
+  permission_list->Append(new base::StringValue("usb"));
+  manifest.Set(extensions::manifest_keys::kPermissions, permission_list);
+
+  std::string error;
+  base::FilePath path;
+  PathService::Get(base::FILE_EXE, &path);
+  g_extension = (Extension::Create(
+      path, extensions::Manifest::INTERNAL, manifest, Extension::NO_FLAGS,
+      //      crx_file::id_util::GenerateId("io-blink"),
+      &error));
   int process_id = render_view_host ? render_view_host->GetProcess()->GetID() :
                                       render_frame_host->GetProcess()->GetID();
   scoped_refptr<ExtensionFunction> function(
       CreateExtensionFunction(params,
-                              extension,
+                              g_extension.get(),
                               process_id,
                               *process_map,
                               ExtensionAPI::GetSharedInstance(),

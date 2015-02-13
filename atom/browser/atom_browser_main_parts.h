@@ -13,6 +13,7 @@ namespace extensions {
 class ExtensionsBrowserClient;
 class ExtensionsClient;
 class ShellExtensionSystem;
+class ShellDeviceClient;
 }
 #endif
 
@@ -62,6 +63,7 @@ class AtomBrowserMainParts : public brightray::BrowserMainParts {
 
   scoped_ptr<extensions::ExtensionsClient> extensions_client_;
   scoped_ptr<extensions::ExtensionsBrowserClient> extensions_browser_client_;
+  scoped_ptr<extensions::ShellDeviceClient> device_client_;
 #endif
 
   base::Timer gc_timer_;
