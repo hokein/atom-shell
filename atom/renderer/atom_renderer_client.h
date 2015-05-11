@@ -34,7 +34,6 @@ class AtomRendererClient : public content::ContentRendererClient,
 
   // content::ContentRendererClient:
   void RenderThreadStarted() override;
-  void RenderFrameCreated(content::RenderFrame*) override;
   void RenderViewCreated(content::RenderView*) override;
   blink::WebSpeechSynthesizer* OverrideSpeechSynthesizer(
       blink::WebSpeechSynthesizerClient* client) override;

@@ -11,7 +11,6 @@
 #include "atom/common/options_switches.h"
 #include "atom/renderer/atom_render_view_observer.h"
 #include "atom/renderer/guest_view_container.h"
-#include "chrome/renderer/pepper/pepper_helper.h"
 #include "chrome/renderer/printing/print_web_view_helper.h"
 #include "chrome/renderer/tts_dispatcher.h"
 #include "content/public/common/content_constants.h"
@@ -78,11 +77,6 @@ void AtomRendererClient::WebKitInitialized() {
 
 void AtomRendererClient::RenderThreadStarted() {
   content::RenderThread::Get()->AddObserver(this);
-}
-
-void AtomRendererClient::RenderFrameCreated(
-    content::RenderFrame* render_frame) {
-  new PepperHelper(render_frame);
 }
 
 void AtomRendererClient::RenderViewCreated(content::RenderView* render_view) {
