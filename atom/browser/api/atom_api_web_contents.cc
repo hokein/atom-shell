@@ -766,6 +766,14 @@ void WebContents::RemoveWorkSpace(mate::Arguments* args,
   DevToolsRemoveFileSystem(path);
 }
 
+void WebContents::ChooseDesktopMedia(
+    const std::vector<std::string>& sources,
+    DesktopCaptureHelper::ChooseDesktopMediaCallback callback) {
+  if (!desktop_capture_helper_)
+    desktop_capture_helper_.reset(new DesktopCaptureHelper(web_contents()));
+  desktop_capture_helper_->ChooseDesktopMedia(sources, callback);
+}
+
 void WebContents::Undo() {
   web_contents()->Undo();
 }
@@ -957,6 +965,7 @@ mate::ObjectTemplateBuilder WebContents::GetObjectTemplateBuilder(
         .SetMethod("_printToPDF", &WebContents::PrintToPDF)
         .SetMethod("addWorkSpace", &WebContents::AddWorkSpace)
         .SetMethod("removeWorkSpace", &WebContents::RemoveWorkSpace)
+        .SetMethod("chooseDesktopMedia", &WebContents::ChooseDesktopMedia)
         .SetProperty("session", &WebContents::Session)
         .Build());
 

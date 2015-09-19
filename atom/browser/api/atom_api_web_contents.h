@@ -8,6 +8,7 @@
 #include <string>
 #include <vector>
 
+#include "atom/browser/api/desktop_capture_helper.h"
 #include "atom/browser/api/frame_subscriber.h"
 #include "atom/browser/api/trackable_object.h"
 #include "atom/browser/common_web_contents_delegate.h"
@@ -134,6 +135,9 @@ class WebContents : public mate::TrackableObject<WebContents>,
 
   // Returns the web preferences of current WebContents.
   v8::Local<v8::Value> GetWebPreferences(v8::Isolate* isolate);
+  void ChooseDesktopMedia(
+      const std::vector<std::string>& sources,
+      DesktopCaptureHelper::ChooseDesktopMediaCallback callback);
 
  protected:
   explicit WebContents(content::WebContents* web_contents);
@@ -239,6 +243,8 @@ class WebContents : public mate::TrackableObject<WebContents>,
   v8::Global<v8::Value> session_;
 
   scoped_ptr<WebViewGuestDelegate> guest_delegate_;
+
+  scoped_ptr<DesktopCaptureHelper> desktop_capture_helper_;
 
   // The type of current WebContents.
   Type type_;
