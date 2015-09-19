@@ -148,7 +148,7 @@
                 '<(libchromiumcontent_dir)/libGLESv2.dll',
                 '<(libchromiumcontent_dir)/icudtl.dat',
                 '<(libchromiumcontent_dir)/content_resources_200_percent.pak',
-                '<(libchromiumcontent_dir)/content_shell.pak',
+                '<(libchromiumcontent_dir)/libchromiumcontent.pak',
                 '<(libchromiumcontent_dir)/ui_resources_200_percent.pak',
                 '<(libchromiumcontent_dir)/natives_blob.bin',
                 '<(libchromiumcontent_dir)/snapshot_blob.bin',
@@ -193,7 +193,7 @@
               'files': [
                 '<@(copied_libraries)',
                 '<(libchromiumcontent_dir)/icudtl.dat',
-                '<(libchromiumcontent_dir)/content_shell.pak',
+                '<(libchromiumcontent_dir)/libchromiumcontent.pak',
                 '<(libchromiumcontent_dir)/natives_blob.bin',
                 '<(libchromiumcontent_dir)/snapshot_blob.bin',
               ],
@@ -401,7 +401,7 @@
           'mac_bundle': 1,
           'mac_bundle_resources': [
             'atom/common/resources/mac/MainMenu.xib',
-            '<(libchromiumcontent_dir)/content_shell.pak',
+            '<(libchromiumcontent_dir)/libchromiumcontent.pak',
             '<(libchromiumcontent_dir)/icudtl.dat',
             '<(libchromiumcontent_dir)/natives_blob.bin',
             '<(libchromiumcontent_dir)/snapshot_blob.bin',
