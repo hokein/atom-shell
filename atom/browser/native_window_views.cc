@@ -316,6 +316,9 @@ NativeWindowViews::NativeWindowViews(
 
 NativeWindowViews::~NativeWindowViews() {
   window_->RemoveObserver(this);
+  FOR_EACH_OBSERVER(web_modal::ModalDialogHostObserver,
+                    modal_dialog_host_observer_list_,
+                    OnHostDestroying());
 }
 
 void NativeWindowViews::Close() {
@@ -945,6 +948,27 @@ ui::WindowShowState NativeWindowViews::GetRestoredState() {
     return ui::SHOW_STATE_FULLSCREEN;
 
   return ui::SHOW_STATE_NORMAL;
+}
+
+gfx::NativeView NativeWindowViews::GetHostView() const {
+  return window_->GetNativeView();
+}
+
+gfx::Point NativeWindowViews::GetDialogPosition(const gfx::Size& size) {
+  gfx::Size window_size = GetSize();
+  return gfx::Point(
+      std::max(0, (window_size.width() - size.width())/2),
+      std::max(0, (window_size.height() - size.height())/2));
+}
+
+void NativeWindowViews::AddObserver(
+    web_modal::ModalDialogHostObserver* observer) {
+  modal_dialog_host_observer_list_.AddObserver(observer);
+}
+
+void NativeWindowViews::RemoveObserver(
+    web_modal::ModalDialogHostObserver* observer) {
+  modal_dialog_host_observer_list_.RemoveObserver(observer);
 }
 
 // static

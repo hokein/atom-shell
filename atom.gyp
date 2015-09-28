@@ -277,8 +277,13 @@
               '-lcomctl32.lib',
               '-lcomdlg32.lib',
               '-lwininet.lib',
+              '-lwinmm.lib',
             ],
           },
+          'defines': [
+            # For chrome desktop capture API.
+            'WEBRTC_WIN',
+          ],
           'dependencies': [
             # Node is built as static_library on Windows, so we also need to
             # include its dependencies here.
@@ -292,6 +297,10 @@
           ],
         }],  # OS=="win"
         ['OS=="mac"', {
+          'defines': [
+            # For chrome desktop capture API.
+            'WEBRT_MAC',
+          ],
           'dependencies': [
             'vendor/crashpad/client/client.gyp:crashpad_client',
             'vendor/crashpad/handler/handler.gyp:crashpad_handler',

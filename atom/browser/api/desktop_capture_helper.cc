@@ -43,13 +43,26 @@ void DesktopCaptureHelper::ChooseDesktopMedia(
     return;
   }
 
+
+  webrtc::DesktopCaptureOptions options =
+      webrtc::DesktopCaptureOptions::CreateDefault();
+
+#if defined(OS_WIN)
+  // On windows, desktop effects (e.g. Aero) will be disabled when the Desktop
+  // capture API is active by default.
+  // We keep the desktop effects in most times. Howerver, the screen still
+  // fickers when the API is capturing the window due to limitation of current
+  // implemetation. This is a known and wontFix issue in webrtc (see:
+  // http://code.google.com/p/webrtc/issues/detail?id=3373)
+  options.set_disable_effects(false);
+#endif
+
   const gfx::NativeWindow parent_window =
       web_contents_->GetTopLevelNativeWindow();
-
   scoped_ptr<webrtc::ScreenCapturer> screen_capturer(
-      show_screens ? webrtc::ScreenCapturer::Create() : nullptr);
+      show_screens ? webrtc::ScreenCapturer::Create(options) : nullptr);
   scoped_ptr<webrtc::WindowCapturer> window_capturer(
-      show_windows ? webrtc::WindowCapturer::Create() : nullptr);
+      show_windows ? webrtc::WindowCapturer::Create(options) : nullptr);
   scoped_ptr<DesktopMediaList> media_list(new NativeDesktopMediaList(
       screen_capturer.Pass(), window_capturer.Pass()));
 
@@ -58,6 +71,9 @@ void DesktopCaptureHelper::ChooseDesktopMedia(
 #if defined(TOOLKIT_VIEWS) || defined(OS_MACOSX)
   picker_ = DesktopMediaPicker::Create();
 #else
+  RunCallback("The desktop capture API doesn't support this platform.",
+              "",
+              callback)
 #endif
 
   callbacks_[++request_id] = callback;

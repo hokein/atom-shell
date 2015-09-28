@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "atom/browser/ui/accelerator_util.h"
+#include "base/observer_list.h"
 #include "ui/views/widget/widget_delegate.h"
 #include "ui/views/widget/widget_observer.h"
 
@@ -99,6 +100,11 @@ class NativeWindowViews : public NativeWindow,
 #if defined(OS_WIN)
   TaskbarHost& taskbar_host() { return taskbar_host_; }
 #endif
+
+  gfx::NativeView GetHostView() const override;
+  gfx::Point GetDialogPosition(const gfx::Size& size) override;
+  void AddObserver(web_modal::ModalDialogHostObserver* observer) override;
+  void RemoveObserver(web_modal::ModalDialogHostObserver* observer) override;
 
  private:
   // views::WidgetObserver:
@@ -198,6 +204,8 @@ class NativeWindowViews : public NativeWindow,
   gfx::Size maximum_size_;
   gfx::Size widget_size_;
 
+  base::ObserverList<web_modal::ModalDialogHostObserver>
+      modal_dialog_host_observer_list_;
   DISALLOW_COPY_AND_ASSIGN(NativeWindowViews);
 };
 

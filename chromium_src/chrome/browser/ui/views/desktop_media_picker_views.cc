@@ -8,8 +8,6 @@
 #include "base/command_line.h"
 #include "base/strings/utf_string_conversions.h"
 #include "chrome/browser/media/desktop_media_list.h"
-#include "chrome/browser/ui/ash/ash_util.h"
-#include "chrome/common/chrome_switches.h"
 #include "chrome/grit/generated_resources.h"
 #include "components/constrained_window/constrained_window_views.h"
 #include "components/web_modal/popup_manager.h"
@@ -63,6 +61,13 @@ DesktopMediaID::Id AcceleratedWidgetToDesktopMediaId(
 int GetMediaListViewHeightForRows(size_t rows) {
   return kListItemHeight * rows;
 }
+
+// This flag makes Chrome auto-select the provided choice when an extension asks
+// permission to start desktop capture. Should only be used for tests. For
+// instance, --auto-select-desktop-capture-source="Entire screen" will
+// automatically select to share the entire screen in English locales.
+const char kAutoSelectDesktopCaptureSource[] =
+    "auto-select-desktop-capture-source";
 
 }  // namespace
 
@@ -323,7 +328,7 @@ void DesktopMediaListView::OnSourceAdded(int index) {
 
   std::string autoselect_source;
       base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII(
-          switches::kAutoSelectDesktopCaptureSource);
+          kAutoSelectDesktopCaptureSource);
   if (!autoselect_source.empty() &&
       base::ASCIIToUTF16(autoselect_source) == source.name) {
     // Select, then accept and close the dialog when we're done adding sources.
@@ -392,11 +397,11 @@ DesktopMediaPickerDialogView::DesktopMediaPickerDialogView(
       scroll_view_(views::ScrollView::CreateScrollViewWithBorder()),
       list_view_(new DesktopMediaListView(this, media_list.Pass())) {
   if (app_name == target_name) {
-    //label_->SetText(
-        //l10n_util::GetStringFUTF16(IDS_DESKTOP_MEDIA_PICKER_TEXT, app_name));
+    label_->SetText(
+        l10n_util::GetStringFUTF16(IDS_DESKTOP_MEDIA_PICKER_TEXT, app_name));
   } else {
-    //label_->SetText(l10n_util::GetStringFUTF16(
-        //IDS_DESKTOP_MEDIA_PICKER_TEXT_DELEGATED, app_name, target_name));
+    label_->SetText(l10n_util::GetStringFUTF16(
+        IDS_DESKTOP_MEDIA_PICKER_TEXT_DELEGATED, app_name, target_name));
   }
   label_->SetMultiLine(true);
   label_->SetHorizontalAlignment(gfx::ALIGN_LEFT);
@@ -428,14 +433,6 @@ DesktopMediaPickerDialogView::DesktopMediaPickerDialogView(
   // the Id is passed to DesktopMediaList.
   DesktopMediaID::Id dialog_window_id = 0;
   if (!modal_dialog) {
-#if defined(USE_ASH)
-    if (chrome::IsNativeWindowInAsh(widget->GetNativeWindow())) {
-      dialog_window_id =
-          DesktopMediaID::RegisterAuraWindow(widget->GetNativeWindow()).id;
-      DCHECK_NE(dialog_window_id, 0);
-    }
-#endif
-
     if (dialog_window_id == 0) {
       dialog_window_id = AcceleratedWidgetToDesktopMediaId(
           widget->GetNativeWindow()->GetHost()->GetAcceleratedWidget());

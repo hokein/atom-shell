@@ -22,6 +22,11 @@
 #include "ui/gfx/image/image.h"
 #include "ui/gfx/image/image_skia.h"
 
+#if defined(OS_WIN) || defined (OS_LINUX)
+#include "components/web_modal/web_contents_modal_dialog_host.h"
+#include "components/web_modal/web_contents_modal_dialog_manager_delegate.h"
+#endif
+
 class SkRegion;
 
 namespace brightray {
@@ -51,6 +56,10 @@ namespace atom {
 struct DraggableRegion;
 
 class NativeWindow : public content::WebContentsObserver,
+#if defined(OS_WIN) || defined (OS_LINUX)
+                     public web_modal::WebContentsModalDialogHost,
+                     public web_modal::WebContentsModalDialogManagerDelegate,
+#endif
                      public brightray::InspectableWebContentsViewDelegate {
  public:
   using CapturePageCallback = base::Callback<void(const SkBitmap& bitmap)>;
@@ -86,6 +95,15 @@ class NativeWindow : public content::WebContentsObserver,
   static NativeWindow* FromWebContents(content::WebContents* web_contents);
 
   void InitFromOptions(const mate::Dictionary& options);
+
+#if defined(OS_WIN) || defined (OS_LINUX)
+  // web_modal::WebContentsModalDialogManagerDelegate:
+  web_modal::WebContentsModalDialogHost*
+      GetWebContentsModalDialogHost() override { return this; }
+
+  // web_modal::WebContentsModalDialogHost:
+  gfx::Size GetMaximumDialogSize() override { return GetSize(); }
+#endif
 
   virtual void Close() = 0;
   virtual void CloseImmediately() = 0;
@@ -134,6 +152,7 @@ class NativeWindow : public content::WebContentsObserver,
   virtual void SetMenu(ui::MenuModel* menu);
   virtual bool HasModalDialog();
   virtual gfx::NativeWindow GetNativeWindow() = 0;
+
 
   // Taskbar/Dock APIs.
   virtual void SetProgressBar(double progress) = 0;

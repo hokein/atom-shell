@@ -52,6 +52,10 @@
 
 #include "atom/common/node_includes.h"
 
+#if defined(OS_WIN) || defined (OS_LINUX)
+#include "components/web_modal/web_contents_modal_dialog_manager.h"
+#endif
+
 namespace {
 
 struct PrintSettings {
@@ -769,6 +773,16 @@ void WebContents::RemoveWorkSpace(mate::Arguments* args,
 void WebContents::ChooseDesktopMedia(
     const std::vector<std::string>& sources,
     DesktopCaptureHelper::ChooseDesktopMediaCallback callback) {
+#if defined(OS_WIN) || defined (OS_LINUX)
+  // Do some initialized work for web modal dialog in the first call.
+  if (!web_modal::WebContentsModalDialogManager::FromWebContents(
+      web_contents())) {
+    web_modal::WebContentsModalDialogManager::CreateForWebContents(
+        web_contents());
+    web_modal::WebContentsModalDialogManager::FromWebContents(
+        web_contents())->SetDelegate(owner_window());
+  }
+#endif
   if (!desktop_capture_helper_)
     desktop_capture_helper_.reset(new DesktopCaptureHelper(web_contents()));
   desktop_capture_helper_->ChooseDesktopMedia(sources, callback);
