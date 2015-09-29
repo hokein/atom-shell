@@ -172,6 +172,15 @@
           ],
         }],  # OS=="win"
         ['OS=="linux"', {
+          'link_settings': {
+            'libraries': [
+              # libweb_modal.a requires the WebContentsModalDialogManager::
+              # CreateNativeWebModalManager definition in libelectron_lib.a at
+              # linking time.
+              '<(libchromiumcontent_dir)/libweb_modal.a',
+              '<(PRODUCT_DIR)/obj/lib<(project_name)_lib.a',
+            ],
+          },
           'copies': [
             {
               'variables': {
